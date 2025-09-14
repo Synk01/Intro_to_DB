@@ -35,7 +35,7 @@ except mysql.connector.Error as err:
         print("Error: Database does not exist.")
     else:
         print(f"Error: {err}")
-    
+
 finally:
     # Close the cursor and connection if they were successfully created
     if 'cursor' in locals() and cursor is not None:
