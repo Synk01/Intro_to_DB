@@ -1,44 +1,32 @@
 import mysql.connector
-from mysql.connector import errorcode
+from mysql.connector import Error
 
-# Database connection details
-DB_HOST = 'localhost'
-DB_USER = 'your_username'
-DB_PASSWORD = 'your_password'
+def create_database():
+    try:
+        # Connect to MySQL server (replace with your credentials)
+        mydb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="hustle1998",
+            port="3306"
+        )
 
-# Name of the database to be created
-DB_NAME = 'alx_book_store'
+        if mydb.is_connected():
+            cursor = mydb.cursor()
+            
+            # Attempt to create the database using IF NOT EXISTS
+            cursor.execute("CREATE DATABASE IF NOT EXISTS alx_book_store")
+            print("Database 'alx_book_store' created successfully or already exists.")
+            
+            # Close the cursor
+            cursor.close()
 
-try:
-    # Establish a connection to the MySQL server
-    conn = mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD
-    )
+    except mysql.connector.Error as e:
+        print(f"Error: {e}")
+    finally:
+        if mydb.is_connected():
+            mydb.close()
+            print("MySQL connection closed.")
 
-    # Create a cursor object to execute SQL queries
-    cursor = conn.cursor()
-
-    # SQL query to create the database if it doesn't exist
-    create_db_query = f"CREATE DATABASE IF NOT EXISTS {DB_NAME}"
-
-    # Execute the query
-    cursor.execute(create_db_query)
-
-    print(f"Database '{DB_NAME}' created successfully!")
-
-except mysql.connector.Error as err:
-    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("Error: Access denied. Check your username and password.")
-    elif err.errno == errorcode.ER_BAD_DB_ERROR:
-        print("Error: Database does not exist.")
-    else:
-        print(f"Error: {err}")
-
-finally:
-    # Close the cursor and connection if they were successfully created
-    if 'cursor' in locals() and cursor is not None:
-        cursor.close()
-    if 'conn' in locals() and conn is not None:
-        conn.close()
+if __name__ == "__main__":
+    create_database()
